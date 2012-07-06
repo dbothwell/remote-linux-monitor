@@ -81,6 +81,8 @@ public class RemoteMain extends JFrame implements WindowListener {
 	public static final int ALL_PROCESS = 1;
 	public static final int MY_PROCESS = 2;
 	
+	protected static final String TITLE = "Remote Linux Monitor";
+	
 	private static final int TAB_INDEX_PROCESS = 1;
 	
 	protected static int TIMER_DELAY_PROCESSES = 3000;
@@ -444,7 +446,7 @@ public class RemoteMain extends JFrame implements WindowListener {
 	
 	private void initialize() {
 		
-		setTitle("Remote Linux Monitor");
+		setTitle(TITLE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		
@@ -542,30 +544,45 @@ public class RemoteMain extends JFrame implements WindowListener {
 	
 	private void login() throws Exception {
 
+		try {
+			stop();
+			sshSession.disconnect();
 
-			try {
-				stop();
-				sshSession.disconnect();
+			LoginDialog loginDialog = new LoginDialog(RemoteMain.this, sshUserInfo);
+			int result = loginDialog.showDialog();
 
-				LoginDialog loginDialog = new LoginDialog(RemoteMain.this, sshUserInfo);
-				int result = loginDialog.showDialog();
-				
-				if (result == JOptionPane.OK_OPTION) {
-					
-					sshSession.login(sshUserInfo, sshOptions);
-					toggleConnected();
-					start();
-				}
-				
-			} catch (Exception e) {
-		
-				sshUserInfo = new SSHUserInfo();
-				JOptionPane.showMessageDialog(this, "Failed to connect.\nReason: " + e.getMessage(), "Connection error", JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-				throw e;
+			if (result == JOptionPane.OK_OPTION) {
+
+				sshSession.login(sshUserInfo, sshOptions);
+				toggleConnected();
+				start();
 			}
-			
 
+		} catch (Exception e) {
+
+//			sshUserInfo = new SSHUserInfo();
+			JOptionPane.showMessageDialog(this, "Failed to connect.\nReason: " + e.getMessage(), "Connection error", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	
+	private void autoLogin() throws Exception {
+
+		try {
+			stop();
+			sshSession.disconnect();
+
+			sshSession.login(sshUserInfo, sshOptions);
+			toggleConnected();
+			start();
+
+		} catch (Exception e) {
+
+//			sshUserInfo = new SSHUserInfo();
+			JOptionPane.showMessageDialog(this, "Failed to connect.\nReason: " + e.getMessage(), "Connection error", JOptionPane.ERROR_MESSAGE);
+			login();
+		}
 	}
 	
 	private void toggleConnected() {
@@ -631,6 +648,15 @@ public class RemoteMain extends JFrame implements WindowListener {
 			
 			SystemInfo systemInfo = SystemInfo.factory(sshSession);
 			panelSystem.display(systemInfo);
+			
+			if (systemInfo.getComputerName() != null) {
+				
+				setTitle(TITLE + " : " + systemInfo.getComputerName());
+				
+			} else {
+				
+				setTitle(TITLE);
+			}
 			
 			timerProcesses.start();
 			timerResources.start();
@@ -904,29 +930,97 @@ public class RemoteMain extends JFrame implements WindowListener {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
+		
 		EventQueue.invokeLater(new Runnable() {
+			
 			public void run() {
-				try {
-					
-					com.nilo.plaf.nimrod.NimRODTheme nt = new com.nilo.plaf.nimrod.NimRODTheme();
-					nt.setSecondary(new Color(221,219,200));
 
+				try {
+					String host = SSHUserInfo.DEFAULT_HOST;
+					String user = SSHUserInfo.DEFAULT_USER;
+					String password = null;
+					int port = SSHSession.DEFAULT_PORT;
+					
+					boolean attemptLogin = false;
+					
+					for (int i = 0; i < args.length; i++) {
+						
+						if (args[i].equals("-h") || args[i].equals("--help") || args[i].equals("?")) {
+							
+							displayCommandLineHelp();
+							
+						} else if ((args[i].equals("-H") || args[i].equals("--host")) && (i + 1 < args.length)) {
+							
+							host = args[++i];
+							
+						} else if ((args[i].equals("-u") || args[i].equals("--user")) && (i + 1 < args.length)) {
+							
+							user = args[++i];
+							
+						} else if ((args[i].equals("-p") || args[i].equals("--password")) && (i + 1 < args.length)) {
+							
+							password = args[++i];
+							attemptLogin = true;
+							
+						}  else if ((args[i].equals("-s") || args[i].equals("--ssh_port")) && (i + 1 < args.length)) {
+							
+							try {
+								port = Integer.parseInt(args[++i]);
+								
+							} catch (Exception e) {
+								e.printStackTrace();
+
+							} finally {
+								port = SSHSession.DEFAULT_PORT;
+							}
+						} else {
+							
+							System.err.println("Invalid command line argument: " + args[i]);
+						}
+					}
+					
+					com.nilo.plaf.nimrod.NimRODTheme nimRODTheme = new com.nilo.plaf.nimrod.NimRODTheme();
+					nimRODTheme.setSecondary(new Color(221,219,200));
 					
 					com.nilo.plaf.nimrod.NimRODLookAndFeel NimRODLF = new com.nilo.plaf.nimrod.NimRODLookAndFeel();
-					com.nilo.plaf.nimrod.NimRODLookAndFeel.setCurrentTheme( nt);
-					UIManager.setLookAndFeel( NimRODLF);
-					
-//					UIManager.setLookAndFeel(new com.nilo.plaf.nimrod.NimRODLookAndFeel());
-//			        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					com.nilo.plaf.nimrod.NimRODLookAndFeel.setCurrentTheme(nimRODTheme);
+					UIManager.setLookAndFeel(NimRODLF);
 
 					RemoteMain frame = new RemoteMain();
+					
+					frame.getUserInfo().setHost(host);
+					frame.getUserInfo().setUser(user);
+					frame.getUserInfo().setPassword(password);
+					frame.getSshOptions().setPort(port);
+					
 					frame.setVisible(true);
+					
+					if (attemptLogin) {
+						frame.autoLogin();
+					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+	}
+	
+	private static void displayCommandLineHelp() {
+		
+		String usage = "Usage: java -jar remote-linux-monitor.jar [-h] [-H hostname] [-u username] [-p password] [-s ssh_port]";
+		String flags[] = { "-H --host : set hostname", 
+				"-u --user : set username", 
+				"-p --password : set password", 
+				"-s --ssh_port : set ssh port", 
+				"-h --help ? : Display this help message"};
+		
+		System.out.println(usage);
+		System.out.println();
+		for (String flag: flags) {
+			System.out.println(flag);
+		}
+		System.out.println();
 	}
 }
