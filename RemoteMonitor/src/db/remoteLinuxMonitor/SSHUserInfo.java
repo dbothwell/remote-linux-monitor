@@ -36,8 +36,11 @@ import com.jcraft.jsch.UserInfo;
 
 public class SSHUserInfo implements UserInfo {
 	
-	private String host= "localhost";
-	private String user = System.getProperty("user.name");;
+	public static final String DEFAULT_HOST = "localhost";
+	public static final String DEFAULT_USER = System.getProperty("user.name");
+	
+	private String host = SSHUserInfo.DEFAULT_HOST;
+	private String user = SSHUserInfo.DEFAULT_USER;
 	private String uid;
 	private String password; 
 	
