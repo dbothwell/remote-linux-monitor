@@ -49,6 +49,8 @@ public class ResourceInfo {
 	private static final int MEMORY_HISTORY_INFO = 2;
 	private static final int NETWORK_HISTORY_INFO = 3;
 	
+	private static final String DATE_FORMAT = "MM-dd-yyyy hh:mm:ss a";
+	
 	private ArrayList<YPoint> cpuVertices = new ArrayList<YPoint>();
 	private ArrayList<YPoint> avgCpuVertices = new ArrayList<YPoint>();
 	private ArrayList<YPoint> memoryVertices = new ArrayList<YPoint>();
@@ -73,7 +75,6 @@ public class ResourceInfo {
 			addYPoint(resourceInfo.getAvgCpuVertices(), AVG_CPU_HISTORY_INFO, strs);
 			addYPoint(resourceInfo.getMemoryVertices(), MEMORY_HISTORY_INFO, strs);
 			addYPoint(resourceInfo.getNetworkVertices(), NETWORK_HISTORY_INFO, strs);
-			
 			
 		} catch (Exception e) {
 
@@ -135,11 +136,18 @@ public class ResourceInfo {
     			 			
     			if (str.startsWith("date")) {
     				
-					DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy hh:mm:ss a");
-					Date date = (Date)formatter.parse(str.replace("date ", "")); 
-					Calendar cal=Calendar.getInstance();
-					cal.setTime(date);
-					acpuyp.setTimeStamp(cal);
+					try {
+						DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+						Date date = (Date)formatter.parse(str.replace("date ", "")); 
+						Calendar cal=Calendar.getInstance();
+						cal.setTime(date);
+						acpuyp.setTimeStamp(cal);
+						
+					} catch (Exception e) {
+//						e.printStackTrace();
+//						System.err.println("Defaulting to current client time.");
+						acpuyp.setTimeStamp(Calendar.getInstance());
+					}
     			
     			}  else if (str.startsWith("cpu")) {
     				
@@ -176,11 +184,18 @@ public class ResourceInfo {
     			
     			if (str.startsWith("date")) {
     				
-					DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy hh:mm:ss a");
-					Date date = (Date)formatter.parse(str.replace("date ", "")); 
-					Calendar cal=Calendar.getInstance();
-					cal.setTime(date);
-					cpuhyp.setTimeStamp(cal);
+					try {
+						DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+						Date date = (Date)formatter.parse(str.replace("date ", "")); 
+						Calendar cal=Calendar.getInstance();
+						cal.setTime(date);
+						cpuhyp.setTimeStamp(cal);
+						
+					} catch (Exception e) {
+//						e.printStackTrace();
+//						System.err.println("Defaulting to current client time.");
+						cpuhyp.setTimeStamp(Calendar.getInstance());
+					}
     			
     			}  else if (str.startsWith("cpu")) {
     				
@@ -227,11 +242,18 @@ public class ResourceInfo {
     			
     			if (str.startsWith("date")) {
     				
-					DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy hh:mm:ss a");
-					Date date = (Date)formatter.parse(str.replace("date ", "")); 
-					Calendar cal=Calendar.getInstance();
-					cal.setTime(date);
-					mhyp.setTimeStamp(cal);
+					try {
+						DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+						Date date = (Date)formatter.parse(str.replace("date ", "")); 
+						Calendar cal=Calendar.getInstance();
+						cal.setTime(date);
+						mhyp.setTimeStamp(cal);
+						
+					} catch (Exception e) {
+//						e.printStackTrace();
+//						System.err.println("Defaulting to current client time.");
+						mhyp.setTimeStamp(Calendar.getInstance());
+					}
     			
     			} else if (str.startsWith("MemTotal")) {
     				

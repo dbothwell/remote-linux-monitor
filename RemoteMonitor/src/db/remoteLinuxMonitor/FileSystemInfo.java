@@ -36,7 +36,8 @@ import java.util.ArrayList;
 
 public class FileSystemInfo {
 	
-	private static final String COMMAND = "df -lahTP";
+//	private static final String COMMAND = "df -lahTP";
+	private static final String COMMAND = "df -ahTP";
 
 	private ArrayList<FileSystem> fileSystems = new ArrayList<FileSystem>();
 	

@@ -36,7 +36,8 @@ import java.util.ArrayList;
 
 public class SystemInfo {
 	
-	private static final String COMMAND = "uname -srm; uname -n; df -lh | grep -m 1 \" /\"$; grep \"MemTotal\" /proc/meminfo; grep \"^processor\\|^model name\"  /proc/cpuinfo";
+//	private static final String COMMAND = "uname -srm; uname -n; df -lh | grep -m 1 \" /\"$; grep \"MemTotal\" /proc/meminfo; grep \"^processor\\|^model name\"  /proc/cpuinfo";
+	private static final String COMMAND = "uname -srm; uname -n; df -h | grep -m 1 \" /\"$; grep \"MemTotal\" /proc/meminfo; grep \"^processor\\|^model name\"  /proc/cpuinfo";
 	
 	private String kernelName;
 	private String computerName;
