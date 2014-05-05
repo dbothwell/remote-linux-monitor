@@ -942,6 +942,8 @@ public class RemoteMain extends JFrame implements WindowListener {
 					String password = null;
 					int port = SSHSession.DEFAULT_PORT;
 					
+					boolean useNativeLAndF = false;
+					
 					boolean attemptLogin = false;
 					
 					for (int i = 0; i < args.length; i++) {
@@ -949,6 +951,10 @@ public class RemoteMain extends JFrame implements WindowListener {
 						if (args[i].equals("-h") || args[i].equals("--help") || args[i].equals("?")) {
 							
 							displayCommandLineHelp();
+							
+						} else if (args[i].equals("-n") || args[i].equals("--native")) {
+							
+							useNativeLAndF = true;
 							
 						} else if ((args[i].equals("-H") || args[i].equals("--host")) && (i + 1 < args.length)) {
 							
@@ -963,16 +969,13 @@ public class RemoteMain extends JFrame implements WindowListener {
 							password = args[++i];
 							attemptLogin = true;
 							
-						}  else if ((args[i].equals("-s") || args[i].equals("--ssh_port")) && (i + 1 < args.length)) {
+						}  else if ((args[i].equals("-s") || args[i].equals("--ssh_port") || args[i].equals("--ssh-port")) && (i + 1 < args.length)) {
 							
 							try {
 								port = Integer.parseInt(args[++i]);
 								
 							} catch (Exception e) {
 								e.printStackTrace();
-
-							} finally {
-								port = SSHSession.DEFAULT_PORT;
 							}
 						} else {
 							
@@ -980,12 +983,15 @@ public class RemoteMain extends JFrame implements WindowListener {
 						}
 					}
 					
-					com.nilo.plaf.nimrod.NimRODTheme nimRODTheme = new com.nilo.plaf.nimrod.NimRODTheme();
-					nimRODTheme.setSecondary(new Color(221,219,200));
-					
-					com.nilo.plaf.nimrod.NimRODLookAndFeel NimRODLF = new com.nilo.plaf.nimrod.NimRODLookAndFeel();
-					com.nilo.plaf.nimrod.NimRODLookAndFeel.setCurrentTheme(nimRODTheme);
-					UIManager.setLookAndFeel(NimRODLF);
+					if (!useNativeLAndF) {
+
+						com.nilo.plaf.nimrod.NimRODTheme nimRODTheme = new com.nilo.plaf.nimrod.NimRODTheme();
+						nimRODTheme.setSecondary(new Color(221,219,200));
+
+						com.nilo.plaf.nimrod.NimRODLookAndFeel NimRODLF = new com.nilo.plaf.nimrod.NimRODLookAndFeel();
+						com.nilo.plaf.nimrod.NimRODLookAndFeel.setCurrentTheme(nimRODTheme);
+						UIManager.setLookAndFeel(NimRODLF);
+					}
 
 					RemoteMain frame = new RemoteMain();
 					
@@ -1009,11 +1015,12 @@ public class RemoteMain extends JFrame implements WindowListener {
 	
 	private static void displayCommandLineHelp() {
 		
-		String usage = "Usage: java -jar remote-linux-monitor.jar [-h] [-H hostname] [-u username] [-p password] [-s ssh_port]";
+		String usage = "Usage: java -jar remote-linux-monitor.jar [-h] [-n] [-H hostname] [-u username] [-p password] [-s ssh-port]";
 		String flags[] = { "-H --host : set hostname", 
 				"-u --user : set username", 
 				"-p --password : set password", 
-				"-s --ssh_port : set ssh port", 
+				"-s --ssh-port : set ssh port",
+				"-n --native : set native look & feel",
 				"-h --help ? : Display this help message"};
 		
 		System.out.println(usage);
