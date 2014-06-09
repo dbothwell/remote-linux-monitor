@@ -703,7 +703,7 @@ public class RemoteMain extends JFrame implements WindowListener {
 		public void actionPerformed(ActionEvent e) {
 			try {
 
-				resourceInfo = ResourceInfo.addPlotPoints(sshSession, resourceInfo);
+				resourceInfo = ResourceInfo.addPlotPoints(sshSession, resourceInfo, preference);
 				panelResources.display(resourceInfo);
 
 			} catch (Exception e1) {

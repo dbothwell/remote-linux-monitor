@@ -64,17 +64,17 @@ public class ResourceInfo {
 		networkVertices.clear();
 	}
 	
-	public static ResourceInfo addPlotPoints(SSHSession sshSession, ResourceInfo resourceInfo) throws Exception {
+	public static ResourceInfo addPlotPoints(SSHSession sshSession, ResourceInfo resourceInfo, Preference preference) throws Exception {
 		
 		try {
 //			System.out.println(COMMAND);
 
 			ArrayList<String> strs = sshSession.getStandardOutput(COMMAND);
 			
-			addYPoint(resourceInfo.getCpuVertices(), CPU_HISTORY_INFO, strs);
-			addYPoint(resourceInfo.getAvgCpuVertices(), AVG_CPU_HISTORY_INFO, strs);
-			addYPoint(resourceInfo.getMemoryVertices(), MEMORY_HISTORY_INFO, strs);
-			addYPoint(resourceInfo.getNetworkVertices(), NETWORK_HISTORY_INFO, strs);
+			addYPoint(resourceInfo.getCpuVertices(), CPU_HISTORY_INFO, strs, preference);
+			addYPoint(resourceInfo.getAvgCpuVertices(), AVG_CPU_HISTORY_INFO, strs, preference);
+			addYPoint(resourceInfo.getMemoryVertices(), MEMORY_HISTORY_INFO, strs, preference);
+			addYPoint(resourceInfo.getNetworkVertices(), NETWORK_HISTORY_INFO, strs, preference);
 			
 		} catch (Exception e) {
 
@@ -86,7 +86,7 @@ public class ResourceInfo {
 		return resourceInfo;
 	}
 	
-	private static void addYPoint(ArrayList<YPoint> minutePoints, int yPointType, ArrayList<String> strs) throws Exception {
+	private static void addYPoint(ArrayList<YPoint> minutePoints, int yPointType, ArrayList<String> strs, Preference preference) throws Exception {
 
 		try {
 
@@ -107,7 +107,7 @@ public class ResourceInfo {
 					break;
 					
 				case MEMORY_HISTORY_INFO:
-					yp = getMemoryYPoint(strs);
+					yp = getMemoryYPoint(strs, preference);
 					break;
 					
 				case NETWORK_HISTORY_INFO:
@@ -225,7 +225,7 @@ public class ResourceInfo {
     }
 
     
-	private static YPoint getMemoryYPoint(ArrayList<String> strs) throws Exception {
+	private static YPoint getMemoryYPoint(ArrayList<String> strs, Preference preference) throws Exception {
     	
     	try {
     		YPoint mhyp = new MemoryYPoint();
@@ -288,8 +288,16 @@ public class ResourceInfo {
     				
     			}
     		}
-
-    		Long freeMemory = memFree + buffers + cached;
+    		
+    		Long freeMemory;
+    		if (preference.isDisplayCacheAndBuffersAsUsed()) {
+    			
+    			freeMemory = memFree;
+    			
+    		} else {
+    			
+    			freeMemory = memFree + buffers + cached;
+    		}
     		Long usedMemory = memTotal - freeMemory;
     		mhyp.addVertex(new Memory(Memory.PHYSICAL_MEMORY, memTotal, usedMemory, freeMemory, unit));
     		

@@ -61,6 +61,7 @@ public class PreferenceDialog extends JDialog {
 	private CheckboxList listProcesses;
 	
 	private JSpinner spinnerResource;
+	private JCheckBox checkboxDisplayCache;
 	private JCheckBox checkboxShowCpuHistory;
 	private JCheckBox checkboxShowAverageAll;
 	private JCheckBox checkboxShowMemoryHistory;
@@ -164,29 +165,34 @@ public class PreferenceDialog extends JDialog {
 				((JSpinner.DefaultEditor) spinnerResource.getEditor()).getTextField().setEditable(false);
 				panelResources.add(spinnerResource);
 				
+				checkboxDisplayCache = new JCheckBox("Display cache and buffers as used memory");
+				checkboxDisplayCache.setMargin(new Insets(2, 0, 2, 2));
+				checkboxDisplayCache.setBounds(20, 67, 335, 25);
+				panelResources.add(checkboxDisplayCache);
+				
 				JLabel labelGraphs = new JLabel("Graphs");
 				labelGraphs.setFont(new Font("Dialog", Font.BOLD, 15));
-				labelGraphs.setBounds(12, 95, 210, 17);
+				labelGraphs.setBounds(12, 106, 210, 17);
 				panelResources.add(labelGraphs);
 				
 				checkboxShowCpuHistory = new JCheckBox("Show CPU History");
 				checkboxShowCpuHistory.setMargin(new Insets(2, 0, 2, 2));
-				checkboxShowCpuHistory.setBounds(22, 120, 296, 25);
+				checkboxShowCpuHistory.setBounds(20, 135, 296, 25);
 				panelResources.add(checkboxShowCpuHistory);
 				
 				checkboxShowAverageAll = new JCheckBox("Show Average All CPUs");
 				checkboxShowAverageAll.setMargin(new Insets(2, 0, 2, 2));
-				checkboxShowAverageAll.setBounds(22, 149, 298, 25);
+				checkboxShowAverageAll.setBounds(20, 165, 298, 25);
 				panelResources.add(checkboxShowAverageAll);
 				
 				checkboxShowMemoryHistory = new JCheckBox("Show Memory History");
 				checkboxShowMemoryHistory.setMargin(new Insets(2, 0, 2, 2));
-				checkboxShowMemoryHistory.setBounds(22, 179, 279, 25);
+				checkboxShowMemoryHistory.setBounds(20, 195, 279, 25);
 				panelResources.add(checkboxShowMemoryHistory);
 				
 				checkboxShowNetworkHistory = new JCheckBox("Show Network History");
 				checkboxShowNetworkHistory.setMargin(new Insets(2, 0, 2, 2));
-				checkboxShowNetworkHistory.setBounds(22, 208, 305, 25);
+				checkboxShowNetworkHistory.setBounds(20, 225, 305, 25);
 				panelResources.add(checkboxShowNetworkHistory);
 			}
 			{
@@ -296,6 +302,7 @@ public class PreferenceDialog extends JDialog {
 		preference.setAlertBeforeKillingProcess(checkboxAlertBeforeEnding.isSelected());
 		preference.setUnSelectedProcessFields(listProcesses.getUnSelectedIndexes());
 
+		preference.setDisplayCacheAndBuffersAsUsed(checkboxDisplayCache.isSelected());
 		preference.setShowCPUHistory(checkboxShowCpuHistory.isSelected());
 		preference.setShowAverageCPUHistory(checkboxShowAverageAll.isSelected());
 		preference.setShowMemoryHistory(checkboxShowMemoryHistory.isSelected());
@@ -319,6 +326,8 @@ public class PreferenceDialog extends JDialog {
 		listProcesses.setUnSelectedIndexes(preference.getSelectedProcessFields());
 		
 		spinnerResource.setValue((int) Preference.getResourceUpdateinterval());
+		checkboxDisplayCache.setSelected(preference.isDisplayCacheAndBuffersAsUsed());
+		
 		checkboxShowCpuHistory.setSelected(preference.isShowCPUHistory());
 		checkboxShowAverageAll.setSelected(preference.isShowAverageCPUHistory());
 		checkboxShowMemoryHistory.setSelected(preference.isShowMemoryHistory());

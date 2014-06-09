@@ -43,6 +43,8 @@ public class Preference {
 
 	// Resources
 	private static final int resourceUpdateInterval = RemoteMain.TIMER_DELAY_RESOURCES / 1000;
+	private boolean displayCacheAndBuffersAsUsed = true;
+
 	private boolean showCPUHistory = true;
 	private boolean showAverageCPUHistory = false;
 	private boolean showMemoryHistory = true;
@@ -105,6 +107,20 @@ public class Preference {
 	 */
 	public void setUnSelectedProcessFields(ArrayList<Integer> unSelectedProcessFields) {
 		this.unSelectedProcessFields = unSelectedProcessFields;
+	}
+	
+	/**
+	 * @return the displayCacheAndBuffersAsUsed
+	 */
+	public boolean isDisplayCacheAndBuffersAsUsed() {
+		return displayCacheAndBuffersAsUsed;
+	}
+
+	/**
+	 * @param displayCacheAndBuffersAsUsed the displayCacheAndBuffersAsUsed to set
+	 */
+	public void setDisplayCacheAndBuffersAsUsed(boolean displayCacheAndBuffersAsUsed) {
+		this.displayCacheAndBuffersAsUsed = displayCacheAndBuffersAsUsed;
 	}
 
 	/**
