@@ -40,12 +40,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
@@ -57,6 +60,7 @@ public class SSHOptionsDialog extends JDialog {
 	private RemoteMain remoteMain;
 	private int result = JOptionPane.CANCEL_OPTION;
 	private SSHOptions sshOptions;
+	private JTextField textFieldIdentityFile;
 
 	/**
 	 * Create the dialog.
@@ -69,7 +73,7 @@ public class SSHOptionsDialog extends JDialog {
 		this.sshOptions = sshOptions;
 		
 		setTitle("SSH Options");
-		setBounds(100, 100, 375, 165);
+		setBounds(100, 100, 498, 165);
 		
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setModal(true);
@@ -80,10 +84,10 @@ public class SSHOptionsDialog extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
-		gbl_contentPanel.columnWidths = new int[]{0, 0, 0};
-		gbl_contentPanel.rowHeights = new int[]{0, 0};
-		gbl_contentPanel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0};
+		gbl_contentPanel.rowHeights = new int[]{0, 0, 0};
+		gbl_contentPanel.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 		contentPanel.setLayout(gbl_contentPanel);
 		{
 			JLabel labelSSHPort = new JLabel("SSH Port:");
@@ -97,12 +101,49 @@ public class SSHOptionsDialog extends JDialog {
 		{
 			integerField = new IntegerField(Integer.toString(sshOptions.getPort()));
 			GridBagConstraints gbc_textField = new GridBagConstraints();
-			gbc_textField.insets = new Insets(20, 0, 5, 150);
+			gbc_textField.insets = new Insets(20, 0, 5, 200);
 			gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 			gbc_textField.gridx = 1;
 			gbc_textField.gridy = 0;
 			contentPanel.add(integerField, gbc_textField);
 			integerField.setColumns(10);
+		}
+		{
+			JLabel labelIdentityFile = new JLabel("Identity File:");
+			GridBagConstraints gbc_labelIdentityFile = new GridBagConstraints();
+			gbc_labelIdentityFile.anchor = GridBagConstraints.EAST;
+			gbc_labelIdentityFile.insets = new Insets(5, 10, 0, 5);
+			gbc_labelIdentityFile.gridx = 0;
+			gbc_labelIdentityFile.gridy = 1;
+			contentPanel.add(labelIdentityFile, gbc_labelIdentityFile);
+		}
+		{
+			textFieldIdentityFile = new JTextField(sshOptions.getIdentityFile());
+			GridBagConstraints gbc_textFieldIdentityFile = new GridBagConstraints();
+			gbc_textFieldIdentityFile.insets = new Insets(5, 0, 0, 0);
+			gbc_textFieldIdentityFile.fill = GridBagConstraints.HORIZONTAL;
+			gbc_textFieldIdentityFile.gridx = 1;
+			gbc_textFieldIdentityFile.gridy = 1;
+			contentPanel.add(textFieldIdentityFile, gbc_textFieldIdentityFile);
+			textFieldIdentityFile.setColumns(10);
+		}
+		{
+			JButton btnFileChooser = new JButton("...");
+			btnFileChooser.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					JFileChooser fc = new JFileChooser();
+					int returnVal = fc.showOpenDialog(SSHOptionsDialog.this);
+			        if (returnVal == JFileChooser.APPROVE_OPTION) {
+			            File file = fc.getSelectedFile();
+			            textFieldIdentityFile.setText(file.getAbsolutePath());
+			        }
+				}
+			});
+			GridBagConstraints gbc_btnFileChooser = new GridBagConstraints();
+			gbc_btnFileChooser.insets = new Insets(5, 0, 0, 10);
+			gbc_btnFileChooser.gridx = 2;
+			gbc_btnFileChooser.gridy = 1;
+			contentPanel.add(btnFileChooser, gbc_btnFileChooser);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -116,6 +157,7 @@ public class SSHOptionsDialog extends JDialog {
 						
 						try {
 							SSHOptionsDialog.this.sshOptions.setPort(Integer.parseInt(integerField.getText()));
+							SSHOptionsDialog.this.sshOptions.setIdentityFile(textFieldIdentityFile.getText());
 							SSHOptionsDialog.this.remoteMain.setSshOptions(SSHOptionsDialog.this.sshOptions);
 							result = JOptionPane.OK_OPTION;
 							SSHOptionsDialog.this.dispose();

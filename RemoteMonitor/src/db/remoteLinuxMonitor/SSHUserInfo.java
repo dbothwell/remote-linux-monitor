@@ -43,6 +43,7 @@ public class SSHUserInfo implements UserInfo {
 	private String user = SSHUserInfo.DEFAULT_USER;
 	private String uid;
 	private String password; 
+	private String passphrase;
 	
 	
 	/**
@@ -56,17 +57,19 @@ public class SSHUserInfo implements UserInfo {
 	 * @param host
 	 * @param user
 	 * @param password
+	 * @param passphrase
 	 */
-	public SSHUserInfo(String host, String user, String password) {
+	public SSHUserInfo(String host, String user, String password, String passphrase) {
 		super();
 		this.host = host;
 		this.user = user;
 		this.password = password;
+		this.passphrase = passphrase;
 	}
 
 	@Override
 	public String getPassphrase() {
-		return null;
+		return passphrase;
 	}
 
 	@Override
@@ -140,5 +143,12 @@ public class SSHUserInfo implements UserInfo {
 	 */
 	public void setUid(String uid) {
 		this.uid = uid;
+	}
+
+	/**
+	 * @param passphrase the passphrase to set
+	 */
+	public void setPassphrase(String passphrase) {
+		this.passphrase = passphrase;
 	}
 }

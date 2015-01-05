@@ -58,6 +58,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.Timer;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -559,6 +560,8 @@ public class RemoteMain extends JFrame implements WindowListener {
 			}
 
 		} catch (Exception e) {
+			sshUserInfo.setPassword(null);
+			sshUserInfo.setPassphrase(null);
 
 //			sshUserInfo = new SSHUserInfo();
 			JOptionPane.showMessageDialog(this, "Failed to connect.\nReason: " + e.getMessage(), "Connection error", JOptionPane.ERROR_MESSAGE);
@@ -751,6 +754,8 @@ public class RemoteMain extends JFrame implements WindowListener {
 			
 			setProcessMenuItemsEnabled();
 			
+			repaint();
+			
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -940,6 +945,8 @@ public class RemoteMain extends JFrame implements WindowListener {
 					String host = SSHUserInfo.DEFAULT_HOST;
 					String user = SSHUserInfo.DEFAULT_USER;
 					String password = null;
+					String passphrase = null; 
+					String identityFile = null;
 					int port = SSHSession.DEFAULT_PORT;
 					
 					boolean useNativeLAndF = false;
@@ -969,6 +976,16 @@ public class RemoteMain extends JFrame implements WindowListener {
 							password = args[++i];
 							attemptLogin = true;
 							
+						} else if ((args[i].equals("-i") || args[i].equals("--identity-file")) && (i + 1 < args.length)) {
+							
+							identityFile = args[++i];
+							attemptLogin = true;
+							
+						} else if ((args[i].equals("-P") || args[i].equals("--passphrase")) && (i + 1 < args.length)) {
+							
+							passphrase = args[++i];
+							attemptLogin = true;
+							
 						}  else if ((args[i].equals("-s") || args[i].equals("--ssh_port") || args[i].equals("--ssh-port")) && (i + 1 < args.length)) {
 							
 							try {
@@ -982,15 +999,24 @@ public class RemoteMain extends JFrame implements WindowListener {
 							System.err.println("Invalid command line argument: " + args[i]);
 						}
 					}
+
 					
 					if (!useNativeLAndF) {
 
-						com.nilo.plaf.nimrod.NimRODTheme nimRODTheme = new com.nilo.plaf.nimrod.NimRODTheme();
-						nimRODTheme.setSecondary(new Color(221,219,200));
-
-						com.nilo.plaf.nimrod.NimRODLookAndFeel NimRODLF = new com.nilo.plaf.nimrod.NimRODLookAndFeel();
-						com.nilo.plaf.nimrod.NimRODLookAndFeel.setCurrentTheme(nimRODTheme);
-						UIManager.setLookAndFeel(NimRODLF);
+						for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+							
+					        if ("Nimbus".equals(info.getName())) {
+					        	
+					        	UIManager.put( "nimbusBase", new Color(121,119,100) ); //dark base
+					        	UIManager.put( "nimbusBlueGrey", new Color(171,169,150) ); //middle base
+					            UIManager.put( "control", new Color(221,219,200) ); // light base
+					            UIManager.put( "nimbusSelectionBackground", new Color(208,175,42) );
+					            UIManager.put( "nimbusFocus", new Color(228,195,62) );
+					            UIManager.put( "nimbusOrange", new Color(198,165,32) );
+					            UIManager.setLookAndFeel(info.getClassName());
+					            break;
+					        }
+					    }
 					}
 
 					RemoteMain frame = new RemoteMain();
@@ -998,7 +1024,9 @@ public class RemoteMain extends JFrame implements WindowListener {
 					frame.getUserInfo().setHost(host);
 					frame.getUserInfo().setUser(user);
 					frame.getUserInfo().setPassword(password);
+					frame.getUserInfo().setPassphrase(passphrase);
 					frame.getSshOptions().setPort(port);
+					frame.getSshOptions().setIdentityFile(identityFile);
 					
 					frame.setVisible(true);
 					
@@ -1015,10 +1043,12 @@ public class RemoteMain extends JFrame implements WindowListener {
 	
 	private static void displayCommandLineHelp() {
 		
-		String usage = "Usage: java -jar remote-linux-monitor.jar [-h] [-n] [-H hostname] [-u username] [-p password] [-s ssh-port]";
+		String usage = "Usage: java -jar remote-linux-monitor.jar [-h] [-n] [-H hostname] [-u username] [-p password] [-s ssh-port] [-P passphrase] [-i --identity-file]";
 		String flags[] = { "-H --host : set hostname", 
 				"-u --user : set username", 
 				"-p --password : set password", 
+				"-i --identity-file : set identity file",
+				"-P --passphrase : set passphrase",
 				"-s --ssh-port : set ssh port",
 				"-n --native : set native look & feel",
 				"-h --help ? : Display this help message"};

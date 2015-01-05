@@ -140,7 +140,7 @@ public class LoginDialog extends JDialog {
 		gbc2.anchor = GridBagConstraints.EAST;
 		gbc2.gridy = 1;
 		labelPassword = new JLabel();
-		labelPassword.setText("Password");
+		labelPassword.setText("Password/Passphrase");
 		labelPassword.setFont(new Font("Dialog", Font.PLAIN, 12));
 		panelMain.add(labelPassword, gbc2);
 		
@@ -174,7 +174,7 @@ public class LoginDialog extends JDialog {
 					host = textFieldHostName.getText().substring(textFieldHostName.getText().indexOf('@')+1);
 					passwd = new String(passwordField.getPassword());
 					
-					userInfo = new SSHUserInfo(host, user, passwd);
+					userInfo = new SSHUserInfo(host, user, passwd, passwd);
 					
 					((RemoteMain) LoginDialog.this.getParent()).setUserInfo(userInfo);
 					result = JOptionPane.OK_OPTION;

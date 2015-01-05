@@ -54,6 +54,11 @@ public class SSHSession {
     	
 
 			try {
+				jsch.removeAllIdentity();
+				if (sshOptions.getIdentityFile() != null && !"".equals(sshOptions.getIdentityFile())) {
+					jsch.addIdentity(sshOptions.getIdentityFile());
+				}
+				
 				session = jsch.getSession(sshUserInfo.getUser(), sshUserInfo.getHost(), sshOptions.getPort());
 				
 				java.util.Properties config = new java.util.Properties(); 
@@ -93,43 +98,6 @@ public class SSHSession {
 		}
     }
     
-//    public ArrayList<String> getStandardOutput(String COMMAND) throws Exception {
-//    	
-//    	Channel channel = null;
-//
-//    	try {
-//    		ArrayList<String> strs = new ArrayList<String>();
-//
-//    		channel = session.openChannel("exec");
-//
-//    		((ChannelExec)channel).setCommand(COMMAND);
-//    		channel.setInputStream(null);
-////    		((ChannelExec)channel).setErrStream(System.out);
-//
-//    		InputStream in = channel.getInputStream();
-//
-//    		channel.connect();
-//
-//    		String line;
-//
-//    		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-//    		while ((line = br.readLine()) != null) {
-//    			strs.add(line);
-////    			System.out.println(line);
-//    		}
-//
-//    		channel.disconnect();
-//    		return strs;
-//
-//    	}
-//    	catch (Exception e) {
-//    		
-//    		channel.disconnect();
-//    		e.printStackTrace();
-//    		throw e;
-//    	}
-//    }
-
     public ArrayList<String> getStandardOutput(String COMMAND) throws Exception {
     	
     	Channel channel = null;

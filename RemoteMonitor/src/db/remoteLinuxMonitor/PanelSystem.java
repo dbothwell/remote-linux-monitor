@@ -33,10 +33,12 @@
 package db.remoteLinuxMonitor;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -129,8 +131,9 @@ public class PanelSystem extends JPanel {
 		textAreaSystemProcessors = new JTextArea();
 		textAreaSystemProcessors.setOpaque(false);
 		textAreaSystemProcessors.setFocusable(false);
-		textAreaSystemProcessors.setBorder(null);
+		textAreaSystemProcessors.setBorder(BorderFactory.createEmptyBorder());
 		textAreaSystemProcessors.setEditable(false);
+		textAreaSystemProcessors.setBackground(new Color(0,0,0,0));
 		
 		scrollPane.setViewportView(textAreaSystemProcessors);
 	}

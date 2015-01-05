@@ -32,17 +32,21 @@
 
 package db.remoteLinuxMonitor;
 
+
 public class SSHOptions {
 
 	private int port = SSHSession.DEFAULT_PORT;
+	private String identityFile;
 
 	public SSHOptions() {
 		super();
 	}
 
-	public SSHOptions(int port) {
+	public SSHOptions(int port, String identityFile) {
 		super();
+		
 		this.port = port;
+		this.identityFile = identityFile;
 	}
 
 	/**
@@ -57,5 +61,19 @@ public class SSHOptions {
 	 */
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	/**
+	 * @return the identityFile
+	 */
+	public String getIdentityFile() {
+		return identityFile;
+	}
+
+	/**
+	 * @param identityFile the identityFile to set
+	 */
+	public void setIdentityFile(String identityFile) {
+		this.identityFile = identityFile;
 	}
 }
