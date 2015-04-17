@@ -34,8 +34,10 @@ package db.remoteLinuxMonitor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -948,10 +950,17 @@ public class RemoteMain extends JFrame implements WindowListener {
 					String passphrase = null; 
 					String identityFile = null;
 					int port = SSHSession.DEFAULT_PORT;
-					
+					int tabIndex = -1;
 					boolean useNativeLAndF = false;
 					
 					boolean attemptLogin = false;
+					
+					// position
+					int left = -1;
+					int width = -1;
+					int top = -1;
+					int height = -1;
+					
 					
 					for (int i = 0; i < args.length; i++) {
 						
@@ -994,7 +1003,42 @@ public class RemoteMain extends JFrame implements WindowListener {
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-						} else {
+						} else if (args[i].equals("--left") && (i + 1 < args.length)) {
+							try {
+								left = Integer.parseInt(args[++i]);
+								
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else if (args[i].equals("--top") && (i + 1 < args.length)) {
+							try {
+								top = Integer.parseInt(args[++i]);
+								
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else if (args[i].equals("--width") && (i + 1 < args.length)) {
+							try {
+								width = Integer.parseInt(args[++i]);
+								
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}else if (args[i].equals("--height") && (i + 1 < args.length)) {
+							try {
+								height = Integer.parseInt(args[++i]);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						else if (args[i].equals("--tabIndex") && (i + 1 < args.length)) {
+							try {
+								tabIndex = Integer.parseInt(args[++i]);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}						
+						else {
 							
 							System.err.println("Invalid command line argument: " + args[i]);
 						}
@@ -1028,6 +1072,28 @@ public class RemoteMain extends JFrame implements WindowListener {
 					frame.getSshOptions().setPort(port);
 					frame.getSshOptions().setIdentityFile(identityFile);
 					
+					if (width != -1 && height != -1 && top != -1 && left != -1)
+					{
+						// set size
+						Dimension size = frame.getSize();
+						size.setSize(width, size.getHeight());
+						size.setSize(size.getWidth(), height);
+						frame.setSize(size);
+						
+						
+						// set position
+						Point position = frame.getLocation();
+						position.setLocation(position.getLocation().getX(), top);
+						position.setLocation(left, position.getLocation().getY());
+						frame.setLocation(position);
+					}
+					
+					if (tabIndex != -1)
+					{
+						frame.tabbedPane.setSelectedIndex(tabIndex);											
+					}
+					
+					
 					frame.setVisible(true);
 					
 					if (attemptLogin) {
@@ -1051,6 +1117,8 @@ public class RemoteMain extends JFrame implements WindowListener {
 				"-P --passphrase : set passphrase",
 				"-s --ssh-port : set ssh port",
 				"-n --native : set native look & feel",
+				"--width --height --top --left : set size and position (all parameters required)",
+				"--tabIndex: show tab with index (0-3)",
 				"-h --help ? : Display this help message"};
 		
 		System.out.println(usage);
