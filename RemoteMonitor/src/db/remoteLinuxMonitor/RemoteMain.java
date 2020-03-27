@@ -1051,12 +1051,19 @@ public class RemoteMain extends JFrame implements WindowListener {
 							
 					        if ("Nimbus".equals(info.getName())) {
 					        	
-					        	UIManager.put( "nimbusBase", new Color(121,119,100) ); //dark base
-					        	UIManager.put( "nimbusBlueGrey", new Color(171,169,150) ); //middle base
-					            UIManager.put( "control", new Color(221,219,200) ); // light base
-					            UIManager.put( "nimbusSelectionBackground", new Color(208,175,42) );
-					            UIManager.put( "nimbusFocus", new Color(228,195,62) );
-					            UIManager.put( "nimbusOrange", new Color(198,165,32) );
+//					        	UIManager.put( "nimbusBase", new Color(121,119,100) ); //dark base
+//					        	UIManager.put( "nimbusBlueGrey", new Color(171,169,150) ); //middle base
+//					            UIManager.put( "control", new Color(221,219,200) ); // light base
+//					            UIManager.put( "nimbusSelectionBackground", new Color(208,175,42) );
+//					            UIManager.put( "nimbusFocus", new Color(228,195,62) );
+//					            UIManager.put( "nimbusOrange", new Color(198,165,32) );
+					            
+					        	UIManager.put( "nimbusBase", new Color(48, 119, 227) ); //dark base
+					        	UIManager.put( "nimbusBlueGrey", new Color(164, 172, 186) ); //middle base
+					        	UIManager.put( "control", new Color(225, 229, 235) );
+					        	UIManager.put( "nimbusSelectionBackground", new Color(48, 119, 227) );
+					        	UIManager.put( "nimbusFocus", new Color(48, 119, 227) );
+					        	
 					            UIManager.setLookAndFeel(info.getClassName());
 					            break;
 					        }
