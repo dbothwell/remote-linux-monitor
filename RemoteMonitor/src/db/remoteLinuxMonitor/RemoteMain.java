@@ -38,13 +38,18 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -104,6 +109,7 @@ public class RemoteMain extends JFrame implements WindowListener {
 	private PanelFileSystems panelFileSystems;
 	private PanelProcesses panelProcesses;
 	private PanelResources panelResources;
+	private PanelStatistics panelStatistics;
 	
 	private JMenuItem mntmConnect;
 	private JMenuItem mntmDisconnect;
@@ -124,8 +130,10 @@ public class RemoteMain extends JFrame implements WindowListener {
 	private SSHUserInfo sshUserInfo = new SSHUserInfo();
 	private SSHSession sshSession = new SSHSession();
 	private SSHOptions sshOptions = new SSHOptions();
-	
+	private LogOptions logOptions = new LogOptions();
 	private Preference preference = new Preference();
+	
+	private PrintStream systemlOut;
 	
 	/**
 	 * Create the frame.
@@ -133,7 +141,7 @@ public class RemoteMain extends JFrame implements WindowListener {
 	public RemoteMain() throws Exception {
 		
 		try {
-			setIconImage(Toolkit.getDefaultToolkit().getImage(RemoteMain.class.getResource("/images/binocular_48x48.png")));
+			setIconImage(ImageIO.read(getClass().getResource("/images/remote-monitor-logo-128x128.png")));
 			
 			initializeMenu();
 			initialize();
@@ -147,6 +155,8 @@ public class RemoteMain extends JFrame implements WindowListener {
 			
 			timerFileSystems = new Timer(TIMER_DELAY_FILE_SYSTEMS, runFileSystems);
 			timerFileSystems.setInitialDelay(0);
+			
+			systemlOut = System.out;
 			
 			updatePreference();
 			
@@ -212,6 +222,15 @@ public class RemoteMain extends JFrame implements WindowListener {
 			}
 		});
 		mnMonitor.add(mntmSSHOptions);
+		
+		mntmLogOptions = new JMenuItem("Logging Options");
+		mntmLogOptions.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				
+				(new LogOptionsDialog(RemoteMain.this, logOptions)).setVisible(true);
+			}
+		});
+		mnMonitor.add(mntmLogOptions);
 		
 		separator_4 = new JSeparator();
 		mnMonitor.add(separator_4);
@@ -543,6 +562,8 @@ public class RemoteMain extends JFrame implements WindowListener {
 		
 		panelFileSystems = new PanelFileSystems();
 		tabbedPane.addTab("File Systems", null, panelFileSystems, null);
+		
+		panelStatistics = new PanelStatistics();
 	}
 	
 	private void login() throws Exception {
@@ -603,6 +624,9 @@ public class RemoteMain extends JFrame implements WindowListener {
 			mntmRefresh.setEnabled(true);
 			buttonEndProcess.setEnabled(true);
 			
+			mntmSSHOptions.setEnabled(false);
+			mntmLogOptions.setEnabled(false);
+			
 		} else {
 			
 			mntmConnect.setEnabled(true);
@@ -611,6 +635,9 @@ public class RemoteMain extends JFrame implements WindowListener {
 			
 			mntmRefresh.setEnabled(false);
 			buttonEndProcess.setEnabled(false);
+			
+			mntmSSHOptions.setEnabled(true);
+			mntmLogOptions.setEnabled(true);
 		}
 	}
 	
@@ -643,13 +670,20 @@ public class RemoteMain extends JFrame implements WindowListener {
 		this.sshOptions = sshOptions;
 	}
 
+	public LogOptions getLogOptions() {
+		return logOptions;
+	}
+
+	public void setLogOptions(LogOptions logOptions) {
+		this.logOptions = logOptions;
+	}
+
 	private void start() throws Exception {
 		
 		try {
-			
 			panelResources.panelReset();
-
 			resourceInfo.clear();
+			panelStatistics.clear();
 			
 			SystemInfo systemInfo = SystemInfo.factory(sshSession);
 			panelSystem.display(systemInfo);
@@ -659,7 +693,7 @@ public class RemoteMain extends JFrame implements WindowListener {
 				setTitle(TITLE + " : " + systemInfo.getComputerName());
 				
 			} else {
-				
+				systemInfo.setComputerName("");
 				setTitle(TITLE);
 			}
 			
@@ -669,6 +703,22 @@ public class RemoteMain extends JFrame implements WindowListener {
 			
 			updateUserInfo();
 			updatePreference();
+			
+			if (logOptions.isLogServerStats()) {
+				String fileName = logOptions.getLogFolder() == null ? "" : logOptions.getLogFolder();
+				fileName += (File.separator + systemInfo.getComputerName());
+				
+				LocalDateTime now = LocalDateTime.now();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("_yyyy_MM_dd_HH_mm_ss");
+				fileName += now.format(formatter) + ".log";
+				
+				logOptions.setLogFileName(fileName);
+				
+				PrintStream fileStream = new PrintStream(new FileOutputStream(logOptions.getLogFileName(),true));
+				System.setOut(fileStream);
+			}
+			
+			System.out.println("Timestamp\tAVG all CPUs %\tPhysical Memory %\tSwap Memory %\tNetwork Receive Bytes\tNetwork Send Bytes");
 			
 		} catch (Exception e) {
 
@@ -683,6 +733,17 @@ public class RemoteMain extends JFrame implements WindowListener {
 			timerProcesses.stop();
 			timerResources.stop();
 			timerFileSystems.stop();
+						
+			if (logOptions.isLogServerStats() && !System.out.equals(systemlOut)) {
+				//Reset System.out
+				System.setOut(systemlOut);
+				panelStatistics.setLogFileName(logOptions.getLogFileName());
+				
+				if (logOptions.isSummarizeStats()) {
+					panelStatistics.setText(AnalyzeLog.analyze(logOptions.getLogFileName()));
+					tabbedPane.setSelectedIndex(4);
+				}
+			}
 			
 		} catch (Exception e) {
 
@@ -730,6 +791,7 @@ public class RemoteMain extends JFrame implements WindowListener {
 		}
 	};
 	private JMenuItem mntmSSHOptions;
+	private JMenuItem mntmLogOptions;
 	private JSeparator separator_4;
 	private JMenuItem mntmThirdPartyLibraries;
 	private JSeparator separator_5;
@@ -883,6 +945,20 @@ public class RemoteMain extends JFrame implements WindowListener {
 		}
 		
 		return ALL_PROCESS;
+	}
+	
+	protected void showStatisticsTab(boolean show) {
+		
+		if (show) {
+			if (tabbedPane.getTabCount() == 4) {
+				tabbedPane.addTab("Statistics", null, panelStatistics, null);
+			}
+			
+		} else {
+			if (tabbedPane.getTabCount() > 4) {
+				tabbedPane.remove(4);
+			}
+		}
 	}
 	
 	@Override

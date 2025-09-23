@@ -99,6 +99,16 @@ public class SSHSession {
     }
     
     public ArrayList<String> getStandardOutput(String COMMAND) throws Exception {
+    	try {
+			return getStandardOutput(COMMAND, false);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+    }
+    
+    public ArrayList<String> getStandardOutput(String COMMAND, boolean ignoreErrors) throws Exception {
     	
     	Channel channel = null;
 
@@ -133,7 +143,7 @@ public class SSHSession {
 
     		channel.disconnect();
     		
-    		if (errStrs.size() > 0) {
+    		if (errStrs.size() > 0 && !ignoreErrors) {
     			
     			throw new Exception(errStrs.toString());
     		}

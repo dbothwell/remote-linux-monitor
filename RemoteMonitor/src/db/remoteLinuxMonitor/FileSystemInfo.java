@@ -48,7 +48,7 @@ public class FileSystemInfo {
 			
 			FileSystemInfo fileSystemInfo = new FileSystemInfo();
 
-			ArrayList<String> strs = sshSession.getStandardOutput(COMMAND);
+			ArrayList<String> strs = sshSession.getStandardOutput(COMMAND, true);
 			
 			String delims = "[ ]+";
 			String[] tokens;

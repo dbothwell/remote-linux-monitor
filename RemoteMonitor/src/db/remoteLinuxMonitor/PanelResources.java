@@ -32,6 +32,9 @@
 
 package db.remoteLinuxMonitor;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
@@ -48,7 +51,6 @@ public class PanelResources extends JPanel {
 	public PanelResources() {
 		super();
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		
 		panelReset();
 	}
 	
@@ -75,6 +77,29 @@ public class PanelResources extends JPanel {
 		graphPanelAverageCPU.plotIt(resourceIfo.getAvgCpuVertices());
 		graphPanelMemory.plotIt(resourceIfo.getMemoryVertices());
 		graphPanelNetwork.plotIt(resourceIfo.getNetworkVertices());
+		
+		// System.out logging
+		
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        String timestamp = formatter.format(new Date());
+        		
+		System.out.print(timestamp + "\t");
+		
+		String avgCpu = String.format("%02.0f", resourceIfo.getAvgCpuVertices().get(0).getVertices().get(0).getYPosition());
+		System.out.print(avgCpu + "\t");
+		
+		String pysicalMem = String.format("%02.0f", resourceIfo.getMemoryVertices().get(0).getVertices().get(0).getYPosition());
+		String swapMem = String.format("%02.0f", resourceIfo.getMemoryVertices().get(0).getVertices().get(1).getYPosition());
+		
+		System.out.print(pysicalMem + "\t");
+		System.out.print(swapMem + "\t");
+		
+		String receivedBytes = String.format("%1.0f", resourceIfo.getNetworkVertices().get(0).getVertices().get(0).getYPosition());
+		String sendBytes = String.format("%1.0f", resourceIfo.getNetworkVertices().get(0).getVertices().get(1).getYPosition());
+		
+		System.out.print(receivedBytes + "\t");
+		System.out.println(sendBytes + "\t");
+		
 		revalidate();
 	}
 	

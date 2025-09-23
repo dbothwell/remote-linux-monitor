@@ -1,5 +1,5 @@
 /**
-* Copyright (C) 2011 David Bothwell
+* Copyright (C) 2025 David Bothwell
 * All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without
@@ -32,33 +32,52 @@
 
 package db.remoteLinuxMonitor;
 
-import java.awt.Graphics;
-import java.awt.Image;
+public class LogOptions {
+	
+	private boolean logServerStats = false;
+	private String logFolder = null;
+	private String logFileName = null;
+	private boolean summarizeStats = true;
+	
+	public LogOptions() {}
 
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
+	public LogOptions(boolean logServerStats, String logFolder, String logFileName, boolean summarizeStats) {
 
-public class AboutPanel extends JPanel {
-
-	private Image image;
-
-	public AboutPanel() {
-		
-		try {
-			image = (new ImageIcon(getClass().getResource("/images/remote-monitor-logo-128x128.png")))
-					.getImage();
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
+		this.logServerStats = logServerStats;
+		this.logFolder = logFolder;
+		this.logFileName = logFileName;
+		this.summarizeStats = summarizeStats;
 	}
 
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		
-		if (image != null) {
-
-			g.drawImage(image, 30, 9, image.getWidth(getParent()), image.getHeight(getParent()), this);
-		}
+	public boolean isLogServerStats() {
+		return logServerStats;
 	}
+
+	public void setLogServerStats(boolean logServerStats) {
+		this.logServerStats = logServerStats;
+	}
+	
+	public String getLogFolder() {
+		return logFolder;
+	}
+
+	public void setLogFolder(String logFolder) {
+		this.logFolder = logFolder;
+	}
+
+	public String getLogFileName() {
+		return logFileName;
+	}
+
+	public void setLogFileName(String logFileName) {
+		this.logFileName = logFileName;
+	}
+
+	public boolean isSummarizeStats() {
+		return summarizeStats;
+	}
+
+	public void setSummarizeStats(boolean summarizeStats) {
+		this.summarizeStats = summarizeStats;
+	} 
 }

@@ -68,7 +68,7 @@ public class PanelSystem extends JPanel {
 		labelSystemSideBar.setBorder(new EmptyBorder(20, 5, 0, 0));
 		labelSystemSideBar.setAlignmentX(0.5f);
 		labelSystemSideBar.setVerticalAlignment(SwingConstants.TOP);
-		labelSystemSideBar.setIcon(new ImageIcon(PanelSystem.class.getResource("/images/linux_system_sidebar.png")));
+		labelSystemSideBar.setIcon(new ImageIcon(getClass().getResource("/images/linux_system_sidebar.png")));
 		panelImage.add(labelSystemSideBar, BorderLayout.CENTER);
 		
 		JPanel panelInfo = new JPanel();
@@ -151,11 +151,9 @@ public class PanelSystem extends JPanel {
 		for(int i = 0; i < processors.size(); i++) {
 			
 			if (i == 0) {
-				
 				textAreaSystemProcessors.setText(processors.get(i));
 				
 			} else {
-		
 				textAreaSystemProcessors.append(processors.get(i));
 			}
 			
@@ -163,6 +161,7 @@ public class PanelSystem extends JPanel {
 				textAreaSystemProcessors.append("\n\n");
 			}
 		}
+		textAreaSystemProcessors.setCaretPosition(0);
 	}
 
 }

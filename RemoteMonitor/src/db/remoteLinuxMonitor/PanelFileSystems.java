@@ -173,7 +173,7 @@ public class PanelFileSystems extends JPanel {
 					equals(FileSystem.getColumnHeaders()[FileSystem.COLUMN_DEVICE])) {
 				
 				JLabel jLabel = new JLabel((String) value);
-				jLabel.setIcon(new ImageIcon(FileSystemTableCellRenderer.class.getResource("/images/harddrive.png")));
+				jLabel.setIcon(new ImageIcon(getClass().getResource("/images/harddrive.png")));
 				jLabel.setHorizontalAlignment(SwingConstants.LEFT); 
 				jLabel.setFont(table.getFont());
 				jLabel.setOpaque(true);

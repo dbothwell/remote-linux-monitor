@@ -77,7 +77,7 @@ public class AboutDialog extends JDialog {
 		labelTitle.setBounds(155, 19, 271, 31);
 		contentPanel.add(labelTitle);
 		
-		JLabel labelCopyright = new JLabel("Copyright (c) 2011 David Bothwell");
+		JLabel labelCopyright = new JLabel("Copyright (c) 2011, 2025 David Bothwell");
 		labelCopyright.setHorizontalAlignment(SwingConstants.CENTER);
 		labelCopyright.setBounds(155, 70, 271, 15);
 		contentPanel.add(labelCopyright);
