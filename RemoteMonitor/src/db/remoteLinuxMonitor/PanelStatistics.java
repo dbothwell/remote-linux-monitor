@@ -90,6 +90,7 @@ public class PanelStatistics extends JPanel {
 		panelCenter.setBorder(BorderFactory.createEmptyBorder(2, 10, 10, 10));
 		
 		textAreaStats = new JTextArea();
+		textAreaStats.setEditable(false);
 		textAreaStats.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
 		panelCenter.add(new JScrollPane(textAreaStats),BorderLayout.CENTER);
 		
