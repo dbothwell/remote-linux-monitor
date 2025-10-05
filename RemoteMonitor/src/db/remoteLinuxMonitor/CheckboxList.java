@@ -45,7 +45,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-public class CheckboxList extends JList {
+public class CheckboxList extends JList<Object> {
 
 	public CheckboxList() {
 		super();
@@ -104,14 +104,14 @@ public class CheckboxList extends JList {
 		}
 	}
 
-	class CheckListRenderer extends JCheckBox implements ListCellRenderer {
+	class CheckListRenderer extends JCheckBox implements ListCellRenderer<Object> {
 
 		public CheckListRenderer() {
 			setBackground(UIManager.getColor("List.textBackground"));
 			setForeground(UIManager.getColor("List.textForeground"));
 		}
 
-		public Component getListCellRendererComponent(JList list, Object value,
+		public Component getListCellRendererComponent(JList<?> list, Object value,
 				int index, boolean isSelected, boolean hasFocus) {
 			
 			setEnabled(list.isEnabled());
