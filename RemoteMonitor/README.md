@@ -22,7 +22,7 @@
     </div>
 	<div class="section">
 		<p>
-			To build a Remote Linux Monitor executable jar. Download and extract the source code zip file. Change directory to ./remote-linux-monitor-master/RemoteMonitor and run the command: "mvn package". The jar will be created in the target directory. 
+			To build a Remote Linux Monitor executable jar. Insure Maven is installed locally. Download and extract the source code zip file. Change directory to ./remote-linux-monitor-master/RemoteMonitor (The folder containing the pom.xml file) and run the command: "mvn package". The jar will be created in the target directory. Set the jar's permission's executable bit.
         </p>
 	</div>
 </body>
